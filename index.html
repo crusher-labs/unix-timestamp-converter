@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unix Timestamp Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 flex flex-col items-center justify-center min-h-screen p-4 antialiased">
+
+    <div class="w-full max-w-2xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-white">Unix Timestamp Converter</h1>
+            <p class="text-slate-400 mt-2">Convert between human-readable dates and Unix timestamps.</p>
+        </header>
+
+        <div class="space-y-6">
+            <!-- Current Timestamp -->
+            <div class="bg-slate-800 rounded-xl shadow-2xl border border-slate-700 p-5 text-center">
+                 <h2 class="text-lg font-semibold text-white mb-2">Current Unix Timestamp (seconds)</h2>
+                 <p id="current-timestamp" class="text-3xl font-mono font-bold text-sky-400">Loading...</p>
+                 <p class="text-xs text-slate-500 mt-2">Updates every second</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Human to Unix -->
+                <div class="bg-slate-800 rounded-xl shadow-2xl border border-slate-700 p-6">
+                    <h3 class="text-xl font-semibold text-white mb-4 border-b border-slate-700 pb-3">Human-Readable to Unix</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="date-input" class="block text-sm font-medium text-slate-400 mb-1">Date & Time (Your Local)</label>
+                            <input type="datetime-local" id="date-input" class="w-full bg-slate-700 text-white rounded-md p-2 border border-slate-600 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                        </div>
+                        <div>
+                             <label for="unix-output" class="block text-sm font-medium text-slate-400 mb-1">Resulting Timestamp</label>
+                             <input type="text" id="unix-output" readonly class="w-full bg-slate-900 font-mono text-white rounded-md p-2 border border-slate-600">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unix to Human -->
+                 <div class="bg-slate-800 rounded-xl shadow-2xl border border-slate-700 p-6">
+                    <h3 class="text-xl font-semibold text-white mb-4 border-b border-slate-700 pb-3">Unix to Human-Readable</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="timestamp-input" class="block text-sm font-medium text-slate-400 mb-1">Timestamp (seconds)</label>
+                            <input type="number" id="timestamp-input" class="w-full bg-slate-700 font-mono text-white rounded-md p-2 border border-slate-600 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                        </div>
+                        <div>
+                             <label for="date-output" class="block text-sm font-medium text-slate-400 mb-1">Resulting Date (Your Local)</label>
+                             <input type="text" id="date-output" readonly class="w-full bg-slate-900 text-white rounded-md p-2 border border-slate-600">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const currentTimestampEl = document.getElementById('current-timestamp');
+        const dateInput = document.getElementById('date-input');
+        const unixOutput = document.getElementById('unix-output');
+        const timestampInput = document.getElementById('timestamp-input');
+        const dateOutput = document.getElementById('date-output');
+
+        function updateCurrentTimestamp() {
+            const now = Math.floor(Date.now() / 1000);
+            currentTimestampEl.textContent = now;
+        }
+
+        // Convert date input to timestamp
+        function humanToUnix() {
+            if (dateInput.value) {
+                const date = new Date(dateInput.value);
+                const timestamp = Math.floor(date.getTime() / 1000);
+                unixOutput.value = timestamp;
+            } else {
+                unixOutput.value = '';
+            }
+        }
+
+        // Convert timestamp input to date
+        function unixToHuman() {
+            const timestamp = timestampInput.value;
+            if (timestamp && !isNaN(timestamp)) {
+                // Multiply by 1000 because JS Date uses milliseconds
+                const date = new Date(timestamp * 1000);
+                // toISOString() returns UTC, slice to get YYYY-MM-DDTHH:mm and format for local
+                const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+                const formattedString = localDate.toISOString().slice(0, 19);
+                dateOutput.value = formattedString.replace('T', ' ');
+            } else {
+                dateOutput.value = '';
+            }
+        }
+        
+        // Function to format a Date object into YYYY-MM-DDTHH:MM for the datetime-local input
+        function formatToDateTimeLocal(date) {
+            const pad = (num) => num.toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const month = pad(date.getMonth() + 1);
+            const day = pad(date.getDate());
+            const hours = pad(date.getHours());
+            const minutes = pad(date.getMinutes());
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Initialize
+        function initialize() {
+            // Set up the live current timestamp
+            updateCurrentTimestamp();
+            setInterval(updateCurrentTimestamp, 1000);
+
+            // Set initial values based on current time
+            const now = new Date();
+            const currentTimestampInSeconds = Math.floor(now.getTime() / 1000);
+            
+            dateInput.value = formatToDateTimeLocal(now);
+            timestampInput.value = currentTimestampInSeconds;
+
+            // Trigger initial conversions
+            humanToUnix();
+            unixToHuman();
+        }
+
+        // Event Listeners
+        dateInput.addEventListener('input', humanToUnix);
+        timestampInput.addEventListener('input', unixToHuman);
+
+        // Run on load
+        initialize();
+    </script>
+
+</body>
+</html>
+
