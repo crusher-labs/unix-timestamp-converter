@@ -25,4 +25,4 @@ A simple web tool to convert dates and times to and from Unix timestamps, right 
 ## **Live Tool**
 
 You can access the live tool here:
-👉 [**Unix Timestamp Converter**](https://itxcrusher.github.io/unix-timestamp-converter/)
+👉 [**Unix Timestamp Converter**](https://crusher-labs.github.io/unix-timestamp-converter/)
