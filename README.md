@@ -1,28 +1,25 @@
-# **Unix Timestamp Converter**
+# Unix Timestamp Converter
 
-A simple web tool to convert dates and times to and from Unix timestamps, right in your browser.
+Convert Unix time both ways on a split-flap departures board: a ticking epoch row, local, UTC, ISO 8601 and relative rows that flip when the input changes; milliseconds detected.
 
----
+Live: <https://crusher-labs.github.io/unix-timestamp-converter/>
 
-## **Features**
+## The world: Departures board
 
-* **Live Timestamp:** Displays the current Unix timestamp, updating every second.
-* **Two-Way Conversion:** Convert from a human-readable date/time to a timestamp, and vice-versa.
-* **Local Timezone:** All date and time conversions are based on your browser's local timezone.
-* **Real-Time Updates:** Conversions happen instantly as you type.
+This tool is a **world page** (crusher-labs standard since 2026-09-02): the page is a committed physical object from the tool's own world, with its own CSS, fonts and mode. It does not load `crusher-ui-kit` and has no theme switcher. The brief for this world lives in the workspace atlas (`x:/crusher-labs/docs/context/tools-theme-atlas.md`); change the atlas before changing the world.
 
----
+## Privacy
 
-## **How to Use**
+This tool runs entirely in your browser. There is no server. No data is uploaded, no telemetry, no analytics. The only network requests fired are the page-load fetches for Google Fonts; your inputs and outputs never leave the tab. The "Suggest an improvement" form posts to Web3Forms only when you submit it.
 
-1. **Open the Tool:** Navigate to the live URL.
-2. **To Get a Timestamp:** Use the date and time picker in the “Human-Readable to Unix” section. The resulting timestamp will appear below it.
-3. **To Get a Date:** Enter a Unix timestamp (in seconds) in the “Unix to Human-Readable” section. The corresponding local date and time will appear below it.
-4. **Current Time:** The large display at the top always shows the current timestamp for quick reference.
+## Contract
 
----
+Validated by `tools-hub/scripts/check-static.mjs` (world-page contract: SEO block, CSP, feedback form, hub link, prose + FAQ, no kit pins). Run `npm run check:static` from `repos/tools-hub` before committing.
 
-## **Live Tool**
+## Development
 
-You can access the live tool here:
-👉 [**Unix Timestamp Converter**](https://crusher-labs.github.io/unix-timestamp-converter/)
+Open `index.html` directly in a browser. No build, no dependencies. Verify at 1440 and 390 via Playwright `setViewportSize` before shipping.
+
+## License
+
+MIT.
